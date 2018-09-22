@@ -1,0 +1,31 @@
+  $this->load->library('form_validation');
+        $data['content'] = 'users/v_users';
+        $data['listUsers'] = $this->m_users->getList();
+        $this->form_validation->set_rules('username', 'Username', 'required|callback_check_user', 
+                array(
+                    'required' => 'Username harus di isi',
+                    'check_user' => 'Username harus unik'
+                )
+            );
+        $this->form_validation->set_rules('email', 'Email', 'required|callback_check_user', 
+                array(
+                    'required' => 'Username harus di isi',
+                    'check_user' => 'Email harus unik'
+                )
+        );
+        $this->form_validation->set_rules('name', 'Name', 'required');
+        $this->form_validation->set_rules('password', 'Password', 'required');
+        if ($this->form_validation->run() === FALSE){
+            $this->template->load_template($data);
+        }else{
+            $body = array(
+                'username' =>$this->post('username'),
+                'email' =>$this->post('email'),
+                'name' =>$this->post('name'),
+                'createAt' => date(),
+                'updateAt' => date(),
+                'isActive' => true,
+                'password' => md5($this->post('password'))
+            );
+            $query = $this->m_users->insert_user($body);
+        }
